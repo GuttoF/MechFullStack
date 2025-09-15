@@ -249,3 +249,4 @@ export const verifyStripe = async (req: Request, res: Response) => {
     res.json({ success: false, message: error.message })
   }
 }
+// Modificado em Sun Oct  5 15:01:50 -03 2025
