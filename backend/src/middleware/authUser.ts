@@ -18,3 +18,4 @@ const authUser = async (req: Request, res: Response, next: NextFunction) => {
 }
 
 export default authUser
+// Modificado em Sun Oct  5 15:01:50 -03 2025
