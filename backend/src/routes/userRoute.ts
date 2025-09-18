@@ -18,3 +18,4 @@ userRouter.post('/payment-stripe', authUser, paymentStripe)
 userRouter.post('/verifyStripe', authUser, verifyStripe)
 
 export default userRouter
+// Modificado em Sun Oct  5 15:01:51 -03 2025
