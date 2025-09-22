@@ -34,3 +34,4 @@ const doctorSchema = new Schema<Doctor>({
 
 const doctorModel: Model<Doctor> = mongoose.models.doctor || mongoose.model<Doctor>('doctor', doctorSchema)
 export default doctorModel
+// Modificado em Sun Oct  5 15:01:51 -03 2025
