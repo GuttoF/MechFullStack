@@ -109,3 +109,4 @@ export const adminDashboard = async (_req: Request, res: Response) => {
     res.json({ success: false, message: error.message })
   }
 }
+// Modificado em Sun Oct  5 15:01:51 -03 2025
