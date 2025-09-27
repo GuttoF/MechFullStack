@@ -9,3 +9,4 @@ const connectCloudinary = async (): Promise<void> => {
 }
 
 export default connectCloudinary
+// Modificado em Sun Oct  5 15:01:51 -03 2025
