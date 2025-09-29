@@ -250,3 +250,4 @@ export const verifyStripe = async (req: Request, res: Response) => {
   }
 }
 // Modificado em Sun Oct  5 15:01:50 -03 2025
+// Modificado em Sun Oct  5 15:01:51 -03 2025
