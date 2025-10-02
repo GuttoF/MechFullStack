@@ -30,3 +30,4 @@ const appointmentSchema = new Schema<Appointment>({
 
 const appointmentModel: Model<Appointment> = mongoose.models.appointment || mongoose.model<Appointment>('appointment', appointmentSchema)
 export default appointmentModel
+// Modificado em Sun Oct  5 15:01:51 -03 2025
