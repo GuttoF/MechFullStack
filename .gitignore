@@ -1,0 +1,18 @@
+# Dependencies
+node_modules/
+
+# Builds
+dist/
+coverage/
+*.log
+
+# Env
+.env
+**/.env
+
+# Editor
+.vscode/
+.DS_Store
+
+# Vite
+*.local

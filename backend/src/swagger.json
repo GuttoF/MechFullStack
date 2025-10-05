@@ -1,0 +1,17 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Mech API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/user/get-profile": {
+      "get": {
+        "summary": "Obter perfil do usuário",
+        "responses": {
+          "200": { "description": "OK" }
+        }
+      }
+    }
+  }
+}

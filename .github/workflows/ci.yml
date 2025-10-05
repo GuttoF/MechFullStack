@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+      - name: Install root
+        run: npm --version
+      - name: Install backend deps
+        working-directory: backend
+        run: npm ci
+      - name: Typecheck backend
+        working-directory: backend
+        run: npm run typecheck
+      - name: Build backend
+        working-directory: backend
+        run: npm run build
+      - name: Test backend
+        working-directory: backend
+        run: npm test
+      - name: Install frontend deps
+        working-directory: frontend
+        run: npm ci
+      - name: Build frontend
+        working-directory: frontend
+        run: npm run build
+      - name: Install admin deps
+        working-directory: admin
+        run: npm ci
+      - name: Build admin
+        working-directory: admin
+        run: npm run build
