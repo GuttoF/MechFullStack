@@ -11,6 +11,41 @@ const MyProfile: React.FC = () => {
 
     const { token, backendUrl, userData, setUserData, loadUserProfileData } = useAppContext()
 
+    // Função para traduzir gênero para português
+    const translateGender = (gender: string): string => {
+        const genderMap: { [key: string]: string } = {
+            'Male': 'Masculino',
+            'Female': 'Feminino',
+            'Other': 'Outro',
+            'Not Selected': 'Não selecionado',
+            'Masculino': 'Masculino',
+            'Feminino': 'Feminino',
+            'Outro': 'Outro',
+            'Não selecionado': 'Não selecionado'
+        }
+        return genderMap[gender] || gender
+    }
+
+    // Função para formatar data no padrão brasileiro (DD/MM/YYYY)
+    const formatDateBR = (dateString: string): string => {
+        if (!dateString || dateString === 'Not Selected') return 'Não informado'
+        
+        try {
+            // Se já estiver no formato YYYY-MM-DD
+            if (dateString.includes('-')) {
+                const [year, month, day] = dateString.split('-')
+                return `${day}/${month}/${year}`
+            }
+            // Se já estiver no formato DD/MM/YYYY, retorna como está
+            if (dateString.includes('/')) {
+                return dateString
+            }
+            return dateString
+        } catch (error) {
+            return dateString
+        }
+    }
+
     const updateUserProfileData = async () => {
         try {
             const formData = new FormData();
@@ -90,15 +125,16 @@ const MyProfile: React.FC = () => {
                             <option value="Not Selected">Não selecionado</option>
                             <option value="Male">Masculino</option>
                             <option value="Female">Feminino</option>
+                            <option value="Other">Outro</option>
                         </select>
-                        : <p className='text-gray-500'>{(userData as any).gender}</p>
+                        : <p className='text-gray-500'>{translateGender((userData as any).gender)}</p>
                     }
 
                     <p className='font-medium'>Nascimento:</p>
 
                     {isEdit
                         ? <input className='max-w-28 bg-gray-50' type='date' onChange={(e) => setUserData((prev: any) => ({ ...prev, dob: e.target.value }))} value={(userData as any).dob} />
-                        : <p className='text-gray-500'>{(userData as any).dob}</p>
+                        : <p className='text-gray-500'>{formatDateBR((userData as any).dob)}</p>
                     }
 
                 </div>

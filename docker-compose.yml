@@ -3,9 +3,11 @@ services:
     image: mongo:6
     restart: unless-stopped
     ports:
-      - "27017:27017"
+      - "${MONGO_PORT:-27017}:27017"
     volumes:
       - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=${MONGODB_DB_NAME:-mech}
     healthcheck:
       test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -18,25 +20,27 @@ services:
       context: ./backend
       dockerfile: ../docker/backend.Dockerfile
     ports:
-      - "4000:4000"
+      - "${BACKEND_PORT:-4000}:${BACKEND_PORT:-4000}"
     environment:
-      - MONGODB_URI=mongodb://mongo:27017
-      - JWT_SECRET=dev-secret
-      - ADMIN_EMAIL=admin@admin.com
-      - ADMIN_PASSWORD=admin
-      - CLOUDINARY_NAME=
-      - CLOUDINARY_API_KEY=
-      - CLOUDINARY_SECRET_KEY=
-      - STRIPE_SECRET_KEY=
-      - RAZORPAY_KEY_ID=
-      - RAZORPAY_KEY_SECRET=
-      - CURRENCY=USD
-      - PORT=4000
+      - MONGODB_URI=${MONGODB_URI:-mongodb://mongo:27017}
+      - MONGODB_DB_NAME=${MONGODB_DB_NAME:-mech}
+      - JWT_SECRET=${JWT_SECRET:-dev-secret}
+      - ADMIN_EMAIL=${ADMIN_EMAIL:-admin@admin.com}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - CLOUDINARY_NAME=${CLOUDINARY_NAME:-}
+      - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-}
+      - CLOUDINARY_SECRET_KEY=${CLOUDINARY_SECRET_KEY:-}
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY:-}
+      - RAZORPAY_KEY_ID=${RAZORPAY_KEY_ID:-}
+      - RAZORPAY_KEY_SECRET=${RAZORPAY_KEY_SECRET:-}
+      - CURRENCY=${CURRENCY:-USD}
+      - PORT=${BACKEND_PORT:-4000}
+      - NODE_ENV=${NODE_ENV:-production}
     depends_on:
       mongo:
         condition: service_healthy
     healthcheck:
-      test: ["CMD-SHELL", "node -e \"require('http').get('http://127.0.0.1:4000/',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))\""]
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://127.0.0.1:${BACKEND_PORT:-4000}/',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))\""]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -47,7 +51,7 @@ services:
       context: ./frontend
       dockerfile: ../docker/frontend.Dockerfile
       args:
-        - VITE_BACKEND_URL=/api
+        - VITE_BACKEND_URL=${FRONTEND_BACKEND_URL:-/api}
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"]
       interval: 10s
@@ -60,9 +64,10 @@ services:
       context: ./admin
       dockerfile: ../docker/admin.Dockerfile
       args:
-        - VITE_BACKEND_URL=/api
+        - VITE_BACKEND_URL=${ADMIN_BACKEND_URL:-/api}
+        - VITE_BASE=/admin/
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null 2>&1 || exit 1"]
+      test: ["CMD-SHELL", "wget -qO- http://localhost/admin/ >/dev/null 2>&1 || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -73,8 +78,8 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
-      - "8080:80"
-      - "8081:8081"
+      - "${NGINX_PORT:-8080}:80"
+      - "${NGINX_ADMIN_PORT:-8081}:8081"
     depends_on:
       backend:
         condition: service_healthy

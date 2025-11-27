@@ -11,7 +11,12 @@ import swaggerDoc from './swagger.json' assert { type: 'json' }
 
 const app = express()
 const port = process.env.PORT || 4000
-connectDB()
+
+// Initialize database and cloudinary
+connectDB().catch((err) => {
+  console.error('Failed to connect to database:', err)
+  process.exit(1)
+})
 connectCloudinary()
 
 app.use(express.json())

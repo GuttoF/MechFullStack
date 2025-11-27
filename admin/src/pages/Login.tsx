@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAdminContext } from '../context/AdminContext'
 import { useDoctorContext } from '../context/DoctorContext'
 import axios from 'axios'
@@ -11,33 +12,45 @@ const Login: React.FC = () => {
 
   const { setAToken } = useAdminContext()
   const { setDToken } = useDoctorContext()
+  const navigate = useNavigate()
 
   const backendUrl = import.meta.env.VITE_BACKEND_URL as string | undefined
 
   const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    
+    if (!backendUrl) {
+      toast.error('URL do backend não configurada')
+      console.error('VITE_BACKEND_URL não está definida')
+      return
+    }
+    
     try {
       if (role === 'admin') {
-        const { data } = await axios.post((backendUrl || '') + '/admin/login', { email, password })
+        const { data } = await axios.post(backendUrl + '/admin/login', { email, password })
         if (data.success) {
           localStorage.setItem('aToken', data.token)
           setAToken(data.token)
           toast.success('Login de admin realizado')
+          navigate('/admin-dashboard')
         } else {
           toast.error(data.message)
         }
       } else {
-        const { data } = await axios.post((backendUrl || '') + '/doctor/login', { email, password })
+        const { data } = await axios.post(backendUrl + '/doctor/login', { email, password })
         if (data.success) {
           localStorage.setItem('dToken', data.token)
           setDToken(data.token)
           toast.success('Login de médico realizado')
+          navigate('/doctor-dashboard')
         } else {
           toast.error(data.message)
         }
       }
     } catch (error: any) {
-      toast.error(error.message)
+      console.error('Erro no login:', error)
+      const errorMessage = error.response?.data?.message || error.message || 'Erro ao fazer login'
+      toast.error(errorMessage)
     }
   }
 
@@ -60,7 +73,7 @@ const Login: React.FC = () => {
           <p>Senha</p>
           <input className='border border-[#DADADA] rounded w-full p-2 mt-1' type='password' value={password} onChange={(e)=>setPassword(e.target.value)} required />
         </div>
-        <button className='bg-primary text-white w-full py-2 my-2 rounded-md text-base'>Entrar</button>
+        <button type="submit" className='bg-primary text-white w-full py-2 my-2 rounded-md text-base'>Entrar</button>
       </div>
     </form>
   )
